@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Married Life!</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden; /* Prevent scrollbars during animation */
+            background-color: #f0f0f0; /* Light grey background initially */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: sans-serif;
+        }
+
+        #heart-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .heart {
+            font-size: 4em;
+            color: red;
+            user-select: none; /* Prevent text selection on click */
+            transition: transform 0.2s ease-in-out, font-size 0.2s ease-in-out; /* Faster transition */
+            animation: prominent-beat 0.7s infinite alternate; /* Faster animation cycle */
+        }
+
+        @keyframes prominent-beat {
+            from {
+                transform: scale(1);
+            }
+            to {
+                transform: scale(1.2); /* Larger scale increase */
+            }
+        }
+
+        #tap-text {
+            font-size: 1.2em;
+            color: #555;
+            margin-top: 10px;
+            opacity: 1;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .photo {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%) scale(0.7); /* Start a bit larger and centered horizontally */
+            width: 200px; /* Fixed width for all photos */
+            height: 200px; /* Fixed height for all photos */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            object-fit: cover; /* Ensure images cover the fixed dimensions */
+            transition: top 1s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 1s ease-in-out;
+        }
+
+        #couple-photo {
+            top: -50%; /* Start above the viewport */
+        }
+
+        #friend-photo-left {
+            top: -50%; /* Start above the viewport */
+        }
+
+        #friend-photo-right {
+            top: -50%; /* Start above the viewport */
+        }
+
+        .flower {
+            position: absolute;
+            font-size: 1.5em;
+            opacity: 0;
+            animation: sprinkle 4s linear infinite; /* Slower animation */
+        }
+
+        @keyframes sprinkle {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        #happy-text-container {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            color: white; /* White text */
+            font-family: 'cursive', sans-serif; /* A bit of styling */
+            font-size: 2em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add a shadow for better visibility */
+        }
+
+        .happy-letter {
+            position: absolute;
+            opacity: 0;
+            transition: all 0.5s ease-in-out;
+        }
+
+        #audio {
+            display: none; /* Hide the audio player */
+        }
+
+        .red-background {
+            background-color: red !important;
+            transition: background-color 1s ease-in-out;
+        }
+
+        .zoom-in {
+            transform: scale(2);
+        }
+    </style>
+</head>
+<body>
+    <div id="heart-container">
+        <div class="heart">❤️</div>
+        <div id="tap-text">Tap the Red heart</div>
+    </div>
+
+    <img id="couple-photo" class="photo" src="couple-photo.png" alt="Happy Couple">
+    <br/><br/>
+    <img id="friend-photo-left" class="photo" src="friend1.jpg" alt="Friend 1">
+    <img id="friend-photo-right" class="photo" src="friend2.jpg" alt="Friend 2">
+
+    <div id="happy-text-container">
+        <span id="happy-text"></span> <span style="font-size: 1.5em;"></span>
+    </div>
+
+    <audio id="audio" src="music.mp3"></audio>
+
+    <script>
+        const heartContainer = document.getElementById('heart-container');
+        const heart = document.querySelector('.heart');
+        const tapText = document.getElementById('tap-text');
+        const body = document.body;
+        const couplePhoto = document.getElementById('couple-photo');
+        const friendPhotoLeft = document.getElementById('friend-photo-left');
+        const friendPhotoRight = document.getElementById('friend-photo-right');
+        const happyTextContainer = document.getElementById('happy-text-container');
+        const happyTextElement = document.getElementById('happy-text');
+        const audio = document.getElementById('audio');
+        const photoHeight = 200; // Height of each photo
+        const textContainerHeight = 60; // Approximate height of the text container with some padding
+        const initialTopOffset = textContainerHeight + 20; // Offset below the text
+
+        let clicked = false;
+        const fullHappyText = 'Happy Married Life Bondhu 🕺💕💃';
+        let verticalPosition = -50; // Initial offset from the center
+
+        heartContainer.addEventListener('click', () => {
+            if (!clicked) {
+                clicked = true;
+                heart.classList.add('zoom-in');
+                tapText.style.opacity = 0;
+                body.classList.add('red-background');
+                audio.play();
+
+                const dropPhoto = (photoElement, delay, additionalTopOffset = 0) => {
+                    setTimeout(() => {
+                        photoElement.style.top = `${50 + verticalPosition + additionalTopOffset}px`;
+                        photoElement.style.opacity = 1;
+                        verticalPosition += photoHeight + 20; // Increment for the next photo (height + spacing)
+                    }, delay);
+                };
+
+                // Drop couple photo with initial offset
+                dropPhoto(couplePhoto, 500, initialTopOffset);
+
+                // Drop friend photos below
+                dropPhoto(friendPhotoLeft, 1500);
+                dropPhoto(friendPhotoRight, 2500);
+
+                // Write happy text
+                let textIndex = 0;
+                const typingInterval = 100; // Adjust typing speed (milliseconds per letter)
+
+                const typeWriter = () => {
+                    if (textIndex < fullHappyText.length) {
+                        happyTextElement.textContent += fullHappyText.charAt(textIndex);
+                        textIndex++;
+                        setTimeout(typeWriter, typingInterval);
+                    }
+                };
+
+                setTimeout(() => {
+                    happyTextContainer.style.opacity = 1; // Fade in the text container
+                    typeWriter(); // Start writing the text
+                }, 500);
+
+                // Sprinkle flowers
+                for (let i = 0; i < 50; i++) {
+                    const flower = document.createElement('div');
+                    flower.classList.add('flower');
+                    flower.textContent = '🌸'; // You can change the emoji
+                    const randomX = Math.random() * 100;
+                    const randomDelay = Math.random() * 4; // Longer delay for slower start
+                    const randomDuration = 3 + Math.random() * 3; // Longer duration
+                    const randomSize = 1 + Math.random() * 0.5;
+                    const randomRotation = Math.random() * 360;
+                    flower.style.left = `${randomX}vw`;
+                    flower.style.animationDelay = `${randomDelay}s`;
+                    flower.style.animationDuration = `${randomDuration}s`;
+                    flower.style.fontSize = `${randomSize}em`;
+                    flower.style.transform = `rotate(${randomRotation}deg)`;
+                    body.appendChild(flower);
+                }
+            }
+        });
+
+      
+    </script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Happy Married Life</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="container" id="container">
+  <div class="heart" id="heart"></div>
+  <h1 class="message" id="message">Happy Married Life ❤️</h1>
+  <img src="couple-photo.jpg" alt="Couple" class="couple-photo" id="couplePhoto">
+  <div class="flowers" id="flowers"></div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
